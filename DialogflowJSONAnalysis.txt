@@ -1,0 +1,125 @@
+Request (Dialogflow 에서 날라오는거)
+{
+	'queryResult': {
+		'fulfillmentMessages': [{
+			'text': {
+				'text': ['고잔역 정보를 가져오는 중입니다...']
+			}
+		}],
+		'fulfillmentText': '고잔역 정보를 가져오는 중입니다...',
+		'allRequiredParamsPresent': True,
+		'parameters': {
+			'subway-station-name': '고잔'
+		},
+		'languageCode': 'ko',
+		'intentDetectionConfidence': 1.0,
+		'action': 'Tellmesubwayinfo.Tellmesubwayinfo-custom',
+		'intent': {
+			'displayName': 'Tell me subway info - which station',
+			'name': 'projects/subway-information/agent/intents/57af9503-b7c1-4604-b783-168ffd99c3dd'
+		},
+		'diagnosticInfo': {},
+		'queryText': '고잔역',
+		'outputContexts': [{
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			},
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/tellmesubwayinfo-followup',
+			'lifespanCount': 1
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/actions_capability_screen_output',
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/actions_capability_audio_output',
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/google_assistant_input_type_keyboard',
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/actions_capability_media_response_audio',
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527139917105/contexts/actions_capability_web_browser',
+			'parameters': {
+				'tranportation': '지하철',
+				'subway-station-name.original': '고잔',
+				'tranportation.original': '지하철',
+				'subway-station-name': '고잔'
+			}
+		}]
+	},
+	'originalDetectIntentRequest': {
+		'source': 'google',
+		'version': '2',
+		'payload': {
+			'inputs': [{
+				'rawInputs': [{
+					'query': '고잔역',
+					'inputType': 'KEYBOARD'
+				}],
+				'intent': 'actions.intent.TEXT',
+				'arguments': [{
+					'rawText': '고잔역',
+					'textValue': '고잔역',
+					'name': 'text'
+				}]
+			}],
+			'isInSandbox': True,
+			'surface': {
+				'capabilities': [{
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}, {
+					'name': 'actions.capability.MEDIA_RESPONSE_AUDIO'
+				}, {
+					'name': 'actions.capability.WEB_BROWSER'
+				}]
+			},
+			'conversation': {
+				'conversationId': '1527139917105',
+				'type': 'ACTIVE',
+				'conversationToken': '["tellmesubwayinfo-followup"]'
+			},
+			'availableSurfaces': [{
+				'capabilities': [{
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}, {
+					'name': 'actions.capability.WEB_BROWSER'
+				}]
+			}],
+			'user': {
+				'locale': 'ko-KR',
+				'userId': 'ABwppHGlqs1PFBF3snJAvfvcinHt2GZZkIDblgoHeGnKEgXhTrS1srNBn2i_tKLA4B3ijhrMXiKachvmGzS8atmr',
+				'lastSeen': '2018-05-07T07:50:41Z'
+			}
+		}
+	},
+	'session': 'projects/subway-information/agent/sessions/1527139917105',
+	'responseId': 'a7b7f069-939d-4d2a-b246-5f682c94783d'
+}
