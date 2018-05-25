@@ -25,38 +25,40 @@ app = Flask(__name__)
 
 
 # [START form]
-@app.route('/form')
-def form():
-    return render_template('form.html')
+# @app.route('/form')
+# def form():
+#     return render_template('form.html')
 # [END form]
+
+
 @app.route('/', methods=['POST','GET'])
 def webhook():
 	""" request
 	"""
 	if request.method == 'GET':
-		print('helloworld')
-		return 'hell o'
+		print('Somebody is reaching through webpage!')
+		return 'This is for google assistant purpose only. Please go back.'
 	req = request.get_json(silent=True, force=True)
 	print(req)
 
 
-# [START submitted]
-@app.route('/submitted', methods=['POST'])
-def submitted_form():
-    name = request.form['name']
-    email = request.form['email']
-    site = request.form['site_url']
-    comments = request.form['comments']
+# # [START submitted]
+# @app.route('/submitted', methods=['POST'])
+# def submitted_form():
+#     name = request.form['name']
+#     email = request.form['email']
+#     site = request.form['site_url']
+#     comments = request.form['comments']
 
-    # [END submitted]
-    # [START render_template]
-    return render_template(
-        'submitted_form.html',
-        name=name,
-        email=email,
-        site=site,
-        comments=comments)
-    # [END render_template]
+#     # [END submitted]
+#     # [START render_template]
+#     return render_template(
+#         'submitted_form.html',
+#         name=name,
+#         email=email,
+#         site=site,
+#         comments=comments)
+#     # [END render_template]
 
 
 @app.errorhandler(500)
