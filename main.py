@@ -1,3 +1,4 @@
+# -*-coding:utf-8-*-
 # Copyright 2016 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +18,11 @@ import logging
 
 # [START imports]
 from flask import Flask, render_template, request
+from bs4 import BeautifulSoup
+import urllib.request
+import urllib.parse
+import json
+import requests
 # [END imports]
 
 # [START create_app]
@@ -33,13 +39,34 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST','GET'])
 def webhook():
-	""" request
+	""" Get json request from dialogflow and parse json.
+		Then get subway information from subway api and then send them back json
 	"""
 	if request.method == 'GET':
 		print('Somebody is reaching through webpage!')
 		return 'This is for google assistant purpose only. Please go back.'
 	req = request.get_json(silent=True, force=True)
-	print(req)
+	station_kor = req['queryResult']['parameters']['subway-station-name']
+	station_unicode = urllib.parse.urlencode({'': station_kor})[1:] #ggul tip
+	baseurl = "http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/1/5/" + station_unicode
+	subway_result = requests.get(baseurl).json()
+
+	upline1 = subway_result['realtimeArrivalList'][0]['arvlMsg2']
+	upline2 = subway_result['realtimeArrivalList'][2]['arvlMsg2']
+	dnline1 = subway_result['realtimeArrivalList'][1]['arvlMsg2']
+	dnline2 = subway_result['realtimeArrivalList'][3]['arvlMsg2']
+
+	
+
+
+
+
+
+	
+	
+	
+
+    # print(req)
 
 
 # # [START submitted]
