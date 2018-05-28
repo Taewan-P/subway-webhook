@@ -1,0 +1,279 @@
+Request (Dialogflow 에서 날라오는거)
+
+
+{
+	'queryResult': {
+		'fulfillmentMessages': [{
+			'text': {
+				'text': ['환승역에 계시는군요. 사당역 정보를 가져오는 중입니다...']
+			}
+		}],
+		'fulfillmentText': '환승역에 계시는군요. 사당역 정보를 가져오는 중입니다...',
+		'allRequiredParamsPresent': True,
+		'parameters': {
+			'two-station-name': '사당',
+			'four-station-name': '',
+			'three-station-name': ''
+		},
+		'languageCode': 'ko',
+		'intentDetectionConfidence': 1.0,
+		'action': 'Tellmesubwayinfo.Tellmesubwayinfo-custom',
+		'intent': {
+			'displayName': 'which transfer station',
+			'name': 'projects/subway-information/agent/intents/5e36752f-7c7c-4b38-9a13-58254ff5c92e'
+		},
+		'diagnosticInfo': {},
+		'queryText': '사당',
+		'outputContexts': [{
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			},
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/tellmesubwayinfo-followup',
+			'lifespanCount': 1
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/actions_capability_screen_output',
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/actions_capability_audio_output',
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/google_assistant_input_type_keyboard',
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/actions_capability_media_response_audio',
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410547578/contexts/actions_capability_web_browser',
+			'parameters': {
+				'three-station-name': '',
+				'four-station-name.original': '',
+				'two-station-name': '사당',
+				'two-station-name.original': '사당',
+				'tranportation': '',
+				'four-station-name': '',
+				'tranportation.original': '',
+				'three-station-name.original': ''
+			}
+		}]
+	},
+	'originalDetectIntentRequest': {
+		'source': 'google',
+		'version': '2',
+		'payload': {
+			'inputs': [{
+				'rawInputs': [{
+					'query': '사당',
+					'inputType': 'KEYBOARD'
+				}],
+				'intent': 'actions.intent.TEXT',
+				'arguments': [{
+					'rawText': '사당',
+					'textValue': '사당',
+					'name': 'text'
+				}]
+			}],
+			'isInSandbox': True,
+			'surface': {
+				'capabilities': [{
+					'name': 'actions.capability.MEDIA_RESPONSE_AUDIO'
+				}, {
+					'name': 'actions.capability.WEB_BROWSER'
+				}, {
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}]
+			},
+			'conversation': {
+				'conversationId': '1527410547578',
+				'type': 'ACTIVE',
+				'conversationToken': '["tellmesubwayinfo-followup"]'
+			},
+			'availableSurfaces': [{
+				'capabilities': [{
+					'name': 'actions.capability.WEB_BROWSER'
+				}, {
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}]
+			}],
+			'user': {
+				'locale': 'ko-KR',
+				'userId': 'ABwppHGlqs1PFBF3snJAvfvcinHt2GZZkIDblgoHeGnKEgXhTrS1srNBn2i_tKLA4B3ijhrMXiKachvmGzS8atmr',
+				'lastSeen': '2018-05-27T08:42:18Z'
+			}
+		}
+	},
+	'session': 'projects/subway-information/agent/sessions/1527410547578',
+	'responseId': 'b1eea8f3-2b98-424b-a66b-e3325752c588'
+}
+
+
+{
+	'queryResult': {
+		'fulfillmentMessages': [{
+			'text': {
+				'text': ['인천국제공항역 정보를 가져오는 중입니다...']
+			}
+		}],
+		'fulfillmentText': '인천국제공항역 정보를 가져오는 중입니다...',
+		'allRequiredParamsPresent': True,
+		'parameters': {
+			'one-station-name': '인천국제공항'
+		},
+		'languageCode': 'ko',
+		'intentDetectionConfidence': 0.83,
+		'action': 'Tellmesubwayinfo.Tellmesubwayinfo-custom',
+		'intent': {
+			'displayName': 'which single station',
+			'name': 'projects/subway-information/agent/intents/57af9503-b7c1-4604-b783-168ffd99c3dd'
+		},
+		'diagnosticInfo': {},
+		'queryText': '인천국제공항',
+		'outputContexts': [{
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			},
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/tellmesubwayinfo-followup',
+			'lifespanCount': 1
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/actions_capability_screen_output',
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/actions_capability_audio_output',
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/google_assistant_input_type_keyboard',
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/actions_capability_web_browser',
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			}
+		}, {
+			'name': 'projects/subway-information/agent/sessions/1527410617006/contexts/actions_capability_media_response_audio',
+			'parameters': {
+				'tranportation': '',
+				'one-station-name.original': '인천국제공항',
+				'one-station-name': '인천국제공항',
+				'tranportation.original': ''
+			}
+		}]
+	},
+	'originalDetectIntentRequest': {
+		'source': 'google',
+		'version': '2',
+		'payload': {
+			'inputs': [{
+				'rawInputs': [{
+					'query': '인천국제공항',
+					'inputType': 'KEYBOARD'
+				}],
+				'intent': 'actions.intent.TEXT',
+				'arguments': [{
+					'rawText': '인천국제공항',
+					'textValue': '인천국제공항',
+					'name': 'text'
+				}]
+			}],
+			'isInSandbox': True,
+			'surface': {
+				'capabilities': [{
+					'name': 'actions.capability.MEDIA_RESPONSE_AUDIO'
+				}, {
+					'name': 'actions.capability.WEB_BROWSER'
+				}, {
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}]
+			},
+			'conversation': {
+				'conversationId': '1527410617006',
+				'type': 'ACTIVE',
+				'conversationToken': '["tellmesubwayinfo-followup"]'
+			},
+			'availableSurfaces': [{
+				'capabilities': [{
+					'name': 'actions.capability.WEB_BROWSER'
+				}, {
+					'name': 'actions.capability.AUDIO_OUTPUT'
+				}, {
+					'name': 'actions.capability.SCREEN_OUTPUT'
+				}]
+			}],
+			'user': {
+				'locale': 'ko-KR',
+				'userId': 'ABwppHGlqs1PFBF3snJAvfvcinHt2GZZkIDblgoHeGnKEgXhTrS1srNBn2i_tKLA4B3ijhrMXiKachvmGzS8atmr',
+				'lastSeen': '2018-05-27T08:42:38Z'
+			}
+		}
+	},
+	'session': 'projects/subway-information/agent/sessions/1527410617006',
+	'responseId': 'a6d2441b-8070-488b-a1ba-267d0c6e184d'
+}

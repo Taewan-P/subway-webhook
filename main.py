@@ -1,24 +1,10 @@
 # -*-coding:utf-8-*-
-# Copyright 2016 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 # [START app]
 import logging
 
 # [START imports]
 from flask import Flask, render_template, request
-from bs4 import BeautifulSoup
 import urllib.request
 import urllib.parse
 import json
@@ -30,62 +16,194 @@ app = Flask(__name__)
 # [END create_app]
 
 
-# [START form]
-# @app.route('/form')
-# def form():
-#     return render_template('form.html')
-# [END form]
-
-
 @app.route('/', methods=['POST','GET'])
-def webhook():
+def subway_webhook():
 	""" Get json request from dialogflow and parse json.
 		Then get subway information from subway api and then send them back json
 	"""
 	if request.method == 'GET':
 		print('Somebody is reaching through webpage!')
 		return 'This is for google assistant purpose only. Please go back.'
+	
+	# Get station name from dialogflow
 	req = request.get_json(silent=True, force=True)
-	station_kor = req['queryResult']['parameters']['subway-station-name']
-	station_unicode = urllib.parse.urlencode({'': station_kor})[1:] #ggul tip
-	baseurl = "http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/1/5/" + station_unicode
-	subway_result = requests.get(baseurl).json()
+	intent = req['queryResult']['intent']['displayName']
 
-	upline1 = subway_result['realtimeArrivalList'][0]['arvlMsg2']
-	upline2 = subway_result['realtimeArrivalList'][2]['arvlMsg2']
-	dnline1 = subway_result['realtimeArrivalList'][1]['arvlMsg2']
-	dnline2 = subway_result['realtimeArrivalList'][3]['arvlMsg2']
+	# Let's start parsing :)
+
+	if intent == 'which transfer station':
+		t = transfer_station(req)
+	else:
+		s = single_station(req)
+	
+	
+def subway_status_changer(string):
+	# Change api string to neat sentence
+	a = 0
+	for i in string:
+		if i == '[':
+			a += 1
+		elif i == ']':
+			a += 1
+	
+	if a == 2:
+		return_string = string[1] + '번째 전역 입니다.'
+		return return_string
+
+
+def single_subway_result_gen(result):
+	
+	firstline_id = result['realtimeArrivalList'][0]['subwayId']
+	secondline_id = result['realtimeArrivalList'][0]['subwayId']
+
+	firstline_number = id_to_number(firstline_id)
+	secondline_number = id_to_number(secondline_id)
+
+	firstline = result['realtimeArrivalList'][0]['trainLineNm']
+	firstline_arrival_code = result['realtimeArrivalList'][0]['arvlCd']
+
+	secondline_name = result['realtimeArrivalList'][1]['trainLineNm']
+	secondline_arrival_code = result['realtimeArrivalList'][1]['trainLineNm']
+
+	# Firstline message gen
+	if firstline_arrival_code == '0':
+		# Current station approaching
+		fmessage = '당역 접근중'
+
+	elif firstline_arrival_code == '1':
+		# Current station arrived
+		fmessage = '당역 도착'
+
+	elif firstline_arrival_code == '2':
+		# Current station departed
+		fmessage = '당역 출발'
+
+	elif firstline_arrival_code == '3':
+		# Prev station departed
+		fmessage = '전역 출발'
+
+	elif firstline_arrival_code == '4':
+		# Prev station approaching
+		fmessage = '전역 접근중'
+
+	elif firstline_arrival_code == '5':
+		# Prev station arrived
+		fmessage = '전역 도착'
+
+	elif firstline_arrival_code == '99':
+		# Now running
+		firstArvlMsg = result['realtimeArrivalList'][0]['arvlMsg2']
+		fmessage = subway_status_changer(firstArvlMsg)
+
+	else:
+		print("An error occured in subway webhook system.")	
+		fmessage = '알수 없음 :('
 
 	
+	# Secondline message gen
+	if secondline_arrival_code == '0':
+		# Current station approaching
+		smessage = '당역 접근중'
+
+	elif secondline_arrival_code == '1':
+		# Current station arrived
+		smessage = '당역 도착'
+
+	elif secondline_arrival_code == '2':
+		# Current station departed
+		smessage = '당역 출발'
+
+	elif secondline_arrival_code == '3':
+		# Prev station departed
+		smessage = '전역 출발'
+
+	elif secondline_arrival_code == '4':
+		# Prev station approaching
+		smessage = '전역 접근중'
+
+	elif secondline_arrival_code == '5':
+		# Prev station arrived
+		smessage = '전역 도착'
+
+	elif secondline_arrival_code == '99':
+		# Now running
+		secondArvlMsg = result['realtimeArrivalList'][1]['arvlMsg2']
+		smessage = subway_status_changer(secondArvlMsg)
+
+	else:
+		print("An error occured in subway webhook system.")	
+		smessage = '알수 없음 :('
+
+	dictionary = {'result1': fmessage, 'result2': smessage}
+	
+	return dictionary
 
 
+def id_to_number(sw_id):
+
+	if sw_id[2] == '0':
+		return sw_id[3]
+	
+	elif sw_id == '1063':
+		return '경의중앙'
+
+	elif sw_id == '1065':
+		return '공항철도'
+
+	elif sw_id == '1067':
+		return '경춘'
+
+	elif sw_id == '1071':
+		return '수인'
+
+	elif sw_id == '1075':
+		return '분당'
+
+	elif sw_id == '1077':
+		return '신분당'
+
+	else:
+		return '???'
 
 
+def single_station(dreq):
+	# Which single station
+	station_kor = dreq['queryResult']['parameters']['one-station-name']
+	
+	station_unicode = urllib.parse.urlencode({'': station_kor})[1:] #ggul tip
+	baseurl = "http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/1/2/" + station_unicode
+	subway_result = requests.get(baseurl).json()
+	status = subway_result['errorMessage']['code']
+
+	if status[0] == 'I':
+		# INFO
+		if status[5:] == '000':
+			# Normal status
+			messages = single_subway_result_gen(subway_result) # messages is a dictionary.
+		
+		elif status[5:] == '200':
+			# No data
+			messages = {'result1': 'No subways available', 'result2': 'sorry'}
+
+		else:
+			# API Key Error maybe, or anything else	
+			print("Status INFO error : " + status)
+			messages = {'result1': 'Status INFO error' + status, 'result2': 'Please contact the developer\nswimtw@naver.com'}
+
+	else:
+		# ERROR
+		print("Something went wrong : " + status)
+		messages = {'result1': 'ERROR Code' + status, 'result2': 'Please contact the developer\nswimtw@naver.com'}
+
+
+def transfer_station(req):
+	# Which transfer station
 
 	
 	
 	
 
     # print(req)
-
-
-# # [START submitted]
-# @app.route('/submitted', methods=['POST'])
-# def submitted_form():
-#     name = request.form['name']
-#     email = request.form['email']
-#     site = request.form['site_url']
-#     comments = request.form['comments']
-
-#     # [END submitted]
-#     # [START render_template]
-#     return render_template(
-#         'submitted_form.html',
-#         name=name,
-#         email=email,
-#         site=site,
-#         comments=comments)
-#     # [END render_template]
 
 
 @app.errorhandler(500)
