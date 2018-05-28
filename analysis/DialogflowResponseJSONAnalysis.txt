@@ -1,0 +1,19 @@
+{
+	"fulfillmentText": "This is a text response",
+	"payload": {
+		"google": {
+			"expectUserResponse": False,
+			"richResponse": {
+				"items": [{
+					"simpleResponse": {
+						"textToSpeech": "this is a simple response"
+					}
+				}]
+			}
+		}
+	}
+}
+
+
+
+{"fulfillmentText": "This is a text response", "payload": {"google": {"expectUserResponse": False,"richResponse": {"items": [{"simpleResponse": {"textToSpeech": "this is a simple response"}}]}}}}

@@ -4,7 +4,7 @@
 import logging
 
 # [START imports]
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, json, jsonify
 import urllib.request
 import urllib.parse
 import json
@@ -35,7 +35,7 @@ def subway_webhook():
 		t = transfer_station(req)
 	else:
 		s = single_station(req)
-	
+
 	
 def subway_status_changer(string):
 	# Change api string to neat sentence
@@ -206,9 +206,32 @@ def transfer_station(req):
     # print(req)
 
 
+def single_response_json_gen(dictionary):
+	
+	json_string = {"fulfillmentText": "", "payload": {"google": {"expectUserResponse": False,"richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]}}}}
+
+	text_a = dictionary['result1']
+	text_b = dictionary['result2']
+
+	text_combine = text_a + '\n\n' + text_b
+
+	json_string['fulfillmentText'] = text_combine
+	json_string['payload']['google']['richResponse']['items'][0]['simpleResponse']['textToSpeech'] = text_combine
+
+	return json_string
+
+
+
+
+
 @app.errorhandler(500)
 def server_error(e):
     # Log the error and stacktrace.
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
 # [END app]
+
+
+
+
+	 
