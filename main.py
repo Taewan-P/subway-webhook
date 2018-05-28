@@ -35,6 +35,10 @@ def subway_webhook():
 		t = transfer_station(req)
 	else:
 		s = single_station(req)
+		final = single_response_json_gen(s)
+		return final.jsonify()
+
+	
 
 	
 def subway_status_changer(string):
@@ -198,17 +202,14 @@ def single_station(dreq):
 
 def transfer_station(req):
 	# Which transfer station
+	pass
+
 
 	
-	
-	
-
-    # print(req)
-
-
 def single_response_json_gen(dictionary):
 	
 	json_string = {"fulfillmentText": "", "payload": {"google": {"expectUserResponse": False,"richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]}}}}
+
 
 	text_a = dictionary['result1']
 	text_b = dictionary['result2']
@@ -219,9 +220,6 @@ def single_response_json_gen(dictionary):
 	json_string['payload']['google']['richResponse']['items'][0]['simpleResponse']['textToSpeech'] = text_combine
 
 	return json_string
-
-
-
 
 
 @app.errorhandler(500)
