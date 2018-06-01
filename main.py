@@ -44,7 +44,6 @@ def subway_webhook():
 		t = transfer_station(req)
 	else:
 		s = single_station(req)
-		print(s)
 		final_dict = single_response_json_gen(s)
 		final_json = json.dumps(final_dict)
 		
@@ -70,44 +69,44 @@ def single_subway_result_gen(result):
 	firstline_id = result['realtimeArrivalList'][0]['subwayId']
 	secondline_id = result['realtimeArrivalList'][0]['subwayId']
 
-	firstline_number = id_to_number(firstline_id)
-	secondline_number = id_to_number(secondline_id)
+	firstline_number = id_to_line(firstline_id)
+	secondline_number = id_to_line(secondline_id)
 
 	firstline = result['realtimeArrivalList'][0]['trainLineNm']
 	firstline_arrival_code = result['realtimeArrivalList'][0]['arvlCd']
 
-	secondline_name = result['realtimeArrivalList'][1]['trainLineNm']
+	secondline = result['realtimeArrivalList'][1]['trainLineNm']
 	secondline_arrival_code = result['realtimeArrivalList'][1]['arvlCd']
 
 	# Firstline message gen
 	if firstline_arrival_code == '0':
 		# Current station approaching
-		fmessage = str(unicode('당역 접근중입니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역 접근중입니다.'))
 
 	elif firstline_arrival_code == '1':
 		# Current station arrived
-		fmessage = str(unicode('당역에 도착했습니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역에 도착했습니다.'))
 
 	elif firstline_arrival_code == '2':
 		# Current station departed
-		fmessage = str(unicode('당역을 출발했습니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역을 출발했습니다.'))
 
 	elif firstline_arrival_code == '3':
 		# Prev station departed
-		fmessage = str(unicode('전역을 출발했습니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역을 출발했습니다.'))
 
 	elif firstline_arrival_code == '4':
 		# Prev station approaching
-		fmessage = str(unicode('전역 접근중입니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역 접근중입니다.'))
 
 	elif firstline_arrival_code == '5':
 		# Prev station arrived
-		fmessage = str(unicode('전역에 도착했습니다.'))
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역에 도착했습니다.'))
 
 	elif firstline_arrival_code == '99':
 		# Now running
 		firstArvlMsg = result['realtimeArrivalList'][0]['arvlMsg2']
-		fmessage = subway_status_changer(firstArvlMsg)
+		fmessage = firstline_number + ' ' + firstline + ' ' + str(unicode('열차는 ')) +  '\n' + subway_status_changer(firstArvlMsg)
 
 	else:
 		print("An error occured in subway webhook system.(CODE:firstline)")	
@@ -118,32 +117,32 @@ def single_subway_result_gen(result):
 	# Secondline message gen
 	if secondline_arrival_code == '0':
 		# Current station approaching
-		smessage = str(unicode('당역 접근중입니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역 접근중입니다.'))
 
 	elif secondline_arrival_code == '1':
 		# Current station arrived
-		smessage = str(unicode('당역에 도착했습니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역에 도착했습니다.'))
 
 	elif secondline_arrival_code == '2':
 		# Current station departed
-		smessage = str(unicode('당역을 출발했습니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('당역을 출발했습니다.'))
 
 	elif secondline_arrival_code == '3':
 		# Prev station departed
-		smessage = str(unicode('전역을 출발했습니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역을 출발했습니다.'))
 
 	elif secondline_arrival_code == '4':
 		# Prev station approaching
-		smessage = str(unicode('전역 접근중입니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역 접근중입니다.'))
 
 	elif secondline_arrival_code == '5':
 		# Prev station arrived
-		smessage = str(unicode('전역에 도착했습니다.'))
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + str(unicode('전역에 도착했습니다.'))
 
 	elif secondline_arrival_code == '99':
 		# Now running
 		secondArvlMsg = result['realtimeArrivalList'][1]['arvlMsg2']
-		smessage = subway_status_changer(secondArvlMsg)
+		smessage = secondline_number + ' ' + secondline + ' ' + str(unicode('열차는 ')) +  '\n' + subway_status_changer(secondArvlMsg)
 
 	else:
 		print("An error occured in subway webhook system.(CODE:secondline)")
@@ -155,31 +154,31 @@ def single_subway_result_gen(result):
 	return dictionary
 
 
-def id_to_number(sw_id):
+def id_to_line(sw_id):
 
 	if sw_id[2] == '0':
-		return sw_id[3]
+		return sw_id[3] + str(unicode('호선'))
 	
 	elif sw_id == '1063':
-		return str(unicode('경의중앙'))
+		return str(unicode('경의중앙선'))
 
 	elif sw_id == '1065':
 		return str(unicode('공항철도'))
 
 	elif sw_id == '1067':
-		return str(unicode('경춘'))
+		return str(unicode('경춘선'))
 
 	elif sw_id == '1071':
-		return str(unicode('수인'))
+		return str(unicode('수인선'))
 
 	elif sw_id == '1075':
-		return str(unicode('분당'))
+		return str(unicode('분당선'))
 
 	elif sw_id == '1077':
-		return str(unicode('신분당'))
+		return str(unicode('신분당선'))
 
 	else:
-		return str(unicode('???'))
+		return str(unicode('업데이트되지 않은 노선'))
 
 
 def single_station(dreq):
@@ -229,7 +228,7 @@ def single_response_json_gen(dictionary):
 	text_a = dictionary['result1']
 	text_b = dictionary['result2']
 
-	text_combine = text_a + '\n\n' + text_b
+	text_combine = text_a + '\n\n' + str(unicode('그리고\n')) + text_b
 
 	json_string['fulfillmentText'] = text_combine
 	json_string['payload']['google']['richResponse']['items'][0]['simpleResponse']['textToSpeech'] = text_combine
