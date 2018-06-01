@@ -5,11 +5,20 @@ import logging
 
 # [START imports]
 from flask import Flask, render_template, request, json, jsonify
-import urllib.request
-import urllib.parse
+from requests_toolbelt.adapters import appengine
+from google.appengine.api import urlfetch
+from urlparse import urlparse
+from urllib2 import urlopen
+import urllib
 import json
 import requests
+import sys
+
 # [END imports]
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+appengine.monkeypatch()
 
 # [START create_app]
 app = Flask(__name__)
@@ -35,10 +44,11 @@ def subway_webhook():
 		t = transfer_station(req)
 	else:
 		s = single_station(req)
-		final = single_response_json_gen(s)
-		return final.jsonify()
-
-	
+		print(s)
+		final_dict = single_response_json_gen(s)
+		final_json = json.dumps(final_dict)
+		
+		return final_json.encode('utf-8')
 
 	
 def subway_status_changer(string):
@@ -51,7 +61,7 @@ def subway_status_changer(string):
 			a += 1
 	
 	if a == 2:
-		return_string = string[1] + '번째 전역 입니다.'
+		return_string = string[1] + str(unicode('번째 전역 입니다.'))
 		return return_string
 
 
@@ -67,32 +77,32 @@ def single_subway_result_gen(result):
 	firstline_arrival_code = result['realtimeArrivalList'][0]['arvlCd']
 
 	secondline_name = result['realtimeArrivalList'][1]['trainLineNm']
-	secondline_arrival_code = result['realtimeArrivalList'][1]['trainLineNm']
+	secondline_arrival_code = result['realtimeArrivalList'][1]['arvlCd']
 
 	# Firstline message gen
 	if firstline_arrival_code == '0':
 		# Current station approaching
-		fmessage = '당역 접근중'
+		fmessage = str(unicode('당역 접근중입니다.'))
 
 	elif firstline_arrival_code == '1':
 		# Current station arrived
-		fmessage = '당역 도착'
+		fmessage = str(unicode('당역에 도착했습니다.'))
 
 	elif firstline_arrival_code == '2':
 		# Current station departed
-		fmessage = '당역 출발'
+		fmessage = str(unicode('당역을 출발했습니다.'))
 
 	elif firstline_arrival_code == '3':
 		# Prev station departed
-		fmessage = '전역 출발'
+		fmessage = str(unicode('전역을 출발했습니다.'))
 
 	elif firstline_arrival_code == '4':
 		# Prev station approaching
-		fmessage = '전역 접근중'
+		fmessage = str(unicode('전역 접근중입니다.'))
 
 	elif firstline_arrival_code == '5':
 		# Prev station arrived
-		fmessage = '전역 도착'
+		fmessage = str(unicode('전역에 도착했습니다.'))
 
 	elif firstline_arrival_code == '99':
 		# Now running
@@ -100,34 +110,35 @@ def single_subway_result_gen(result):
 		fmessage = subway_status_changer(firstArvlMsg)
 
 	else:
-		print("An error occured in subway webhook system.")	
-		fmessage = '알수 없음 :('
+		print("An error occured in subway webhook system.(CODE:firstline)")	
+		print("Arrival code is " + firstline_arrival_code)
+		fmessage = str(unicode('알수 없음 :('))
 
 	
 	# Secondline message gen
 	if secondline_arrival_code == '0':
 		# Current station approaching
-		smessage = '당역 접근중'
+		smessage = str(unicode('당역 접근중입니다.'))
 
 	elif secondline_arrival_code == '1':
 		# Current station arrived
-		smessage = '당역 도착'
+		smessage = str(unicode('당역에 도착했습니다.'))
 
 	elif secondline_arrival_code == '2':
 		# Current station departed
-		smessage = '당역 출발'
+		smessage = str(unicode('당역을 출발했습니다.'))
 
 	elif secondline_arrival_code == '3':
 		# Prev station departed
-		smessage = '전역 출발'
+		smessage = str(unicode('전역을 출발했습니다.'))
 
 	elif secondline_arrival_code == '4':
 		# Prev station approaching
-		smessage = '전역 접근중'
+		smessage = str(unicode('전역 접근중입니다.'))
 
 	elif secondline_arrival_code == '5':
 		# Prev station arrived
-		smessage = '전역 도착'
+		smessage = str(unicode('전역에 도착했습니다.'))
 
 	elif secondline_arrival_code == '99':
 		# Now running
@@ -135,8 +146,9 @@ def single_subway_result_gen(result):
 		smessage = subway_status_changer(secondArvlMsg)
 
 	else:
-		print("An error occured in subway webhook system.")	
-		smessage = '알수 없음 :('
+		print("An error occured in subway webhook system.(CODE:secondline)")
+		print("Arrival code is " + secondline_arrival_code)	
+		smessage = str(unicode('알수 없음 :('))
 
 	dictionary = {'result1': fmessage, 'result2': smessage}
 	
@@ -149,34 +161,35 @@ def id_to_number(sw_id):
 		return sw_id[3]
 	
 	elif sw_id == '1063':
-		return '경의중앙'
+		return str(unicode('경의중앙'))
 
 	elif sw_id == '1065':
-		return '공항철도'
+		return str(unicode('공항철도'))
 
 	elif sw_id == '1067':
-		return '경춘'
+		return str(unicode('경춘'))
 
 	elif sw_id == '1071':
-		return '수인'
+		return str(unicode('수인'))
 
 	elif sw_id == '1075':
-		return '분당'
+		return str(unicode('분당'))
 
 	elif sw_id == '1077':
-		return '신분당'
+		return str(unicode('신분당'))
 
 	else:
-		return '???'
+		return str(unicode('???'))
 
 
 def single_station(dreq):
 	# Which single station
-	station_kor = dreq['queryResult']['parameters']['one-station-name']
+	station_kor = str(unicode(dreq['queryResult']['parameters']['one-station-name']))
 	
-	station_unicode = urllib.parse.urlencode({'': station_kor})[1:] #ggul tip
+	station_unicode = urllib.urlencode({'': station_kor})[1:] #ggul tip
 	baseurl = "http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/1/2/" + station_unicode
-	subway_result = requests.get(baseurl).json()
+	subway_result = urlfetch.fetch(baseurl).content
+	subway_result = json.loads(subway_result)
 	status = subway_result['errorMessage']['code']
 
 	if status[0] == 'I':
@@ -199,13 +212,15 @@ def single_station(dreq):
 		print("Something went wrong : " + status)
 		messages = {'result1': 'ERROR Code' + status, 'result2': 'Please contact the developer\nswimtw@naver.com'}
 
+	return messages
+
 
 def transfer_station(req):
 	# Which transfer station
 	pass
 
 
-	
+
 def single_response_json_gen(dictionary):
 	
 	json_string = {"fulfillmentText": "", "payload": {"google": {"expectUserResponse": False,"richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]}}}}
@@ -227,9 +242,5 @@ def server_error(e):
     # Log the error and stacktrace.
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
+
 # [END app]
-
-
-
-
-	 

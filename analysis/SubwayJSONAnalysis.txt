@@ -204,3 +204,13 @@ baseurl = "http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationAr
 		"arvlCd": "99"
 	}]
 }
+
+ 막차가 끝났을때 이것만 뜸
+{
+	"status": 500,
+	"code": "INFO-200",
+	"message": "해당하는 데이터가 없습니다.",
+	"link": "",
+	"developerMessage": "",
+	"total": 0
+}
