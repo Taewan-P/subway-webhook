@@ -8,6 +8,7 @@ from flask import Flask, render_template, request, json, jsonify
 from requests_toolbelt.adapters import appengine
 from google.appengine.api import urlfetch
 from google.appengine import runtime
+from concurrent.futures import TimeoutError
 from urlparse import urlparse
 from urllib2 import urlopen
 import urllib
@@ -37,7 +38,7 @@ def subway_webhook():
 		return 'This is for google assistant purpose only. Please go back.'
 	
 	# Get station name from dialogflow
-	req = unicode(request.get_json(silent=True, force=True))
+	req = request.get_json(silent=True, force=True)
 	logging.warning(req)
 
 	intent = req['queryResult']['intent']['displayName']
@@ -58,7 +59,10 @@ def subway_webhook():
 ########## Public methods ##########
 
 def subway_status_changer(string):
-	# Change api string to neat sentence
+	""" This method changes seoul subway message into neat speakable sentences.
+		This is used in both single_station() and transfer_station().
+	"""
+
 	a = 0
 	for i in string:
 		if i == '[':
@@ -71,6 +75,9 @@ def subway_status_changer(string):
 		return return_string
 
 def id_to_line(sw_id):
+	""" This method changes the subway code to Korean.
+		The subway code comes from the seoul subway api json
+	"""
 
 	if sw_id[2] == '0':
 		return sw_id[3] + str(unicode('호선'))
@@ -97,6 +104,8 @@ def id_to_line(sw_id):
 		return str(unicode('업데이트되지 않은 노선'))
 
 def train_string_combiner(a,b,korean):
+	""" This is a simple method to make arrival message string combine easier.
+	"""
 	return a + ' ' + b + ' ' + str(unicode(korean)) + ' \n'
 
 ####################################
@@ -104,7 +113,11 @@ def train_string_combiner(a,b,korean):
 ########## Single station methods ##########
 
 def single_station(dreq):
-	# Which single station
+	""" This method is for single station call.
+		Dialogflow Intent : Which single station.
+		When the client wants the station info that has no transfer lines, 
+		then the webhook call will be done in this method.
+	"""
 	station_kor = dreq['queryResult']['parameters']['one-station-name']
 	logging.warning(station_kor)
 	station_unicode = urllib.urlencode({'': station_kor})[1:] #ggul tip
@@ -140,7 +153,7 @@ def single_station(dreq):
 			b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
 			messages = {'result1': a, 'result2': b}
 
-	except (ValueError, TypeError, KeyError, runtime.DeadlineExceededError, requests.exceptions.Timeout), e:
+	except (ValueError, TypeError, KeyError, TimeoutError, runtime.DeadlineExceededError, requests.exceptions.Timeout), e:
 		a = str(unicode('지금 서울 지하철 서버가 맛이 갔습니다. 다시 시도해 주세요.'))
 		logging.warning('Error code : ' + str(e))
 		messages = {'result1': a, 'result2': ''}
@@ -149,7 +162,11 @@ def single_station(dreq):
 	return messages
 
 def single_subway_result_gen(result):
-	
+	""" This method generates messages to send to dialogflow back.
+		Before changing it to json response, we need to change the subway api result more readable.
+		This method generates neat readable messages.
+	"""
+
 	firstline_id = result['realtimeArrivalList'][0]['subwayId']
 	secondline_id = result['realtimeArrivalList'][0]['subwayId']
 
@@ -240,7 +257,10 @@ def single_subway_result_gen(result):
 	return dictionary
 
 def single_response_json_gen(dictionary):
-	
+	""" This is a method that makes json string for dialogflow.
+		This method can be developed more such as rich responses...
+		Hope I study nodejs for this haha:)
+	"""
 	json_string = {"fulfillmentText": "", "payload": {"google": {"expectUserResponse": False,"richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]}}}}
 
 
@@ -258,9 +278,14 @@ def single_response_json_gen(dictionary):
 
 ########## Transfer station methods ##########
 
-def transfer_station(req):
+def transfer_station(dreq):
 	# Which transfer station
+	stations = dreq['queryResult']['parameters'] # Dictionary of (two, three, four) stations
 	pass
+
+
+
+
 
 
 @app.errorhandler(500)
