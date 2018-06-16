@@ -121,8 +121,8 @@ def single_station(dreq):
 	station_kor = dreq['queryResult']['parameters']['one-station-name']
 	logging.warning(station_kor)
 	station_unicode = urllib.urlencode({'': station_kor})[1:] #ggul tip
-	logging.warning(str(station_unicode))
 	baseurl = "http://swopenapi.seoul.go.kr/api/subway/<인증키 들어가는곳ㅎ>/json/realtimeStationArrival/1/2/" + station_unicode
+	logging.warning('single-station-unicode : ' + str(station_unicode))
 	
 	try:
 		subway_result = requests.get(baseurl, timeout=6).json()
@@ -157,6 +157,7 @@ def single_station(dreq):
 		a = str(unicode('지금 서울 지하철 서버가 맛이 갔습니다. 다시 시도해 주세요.'))
 		logging.warning('Error code : ' + str(e))
 		messages = {'result1': a, 'result2': ''}
+		return messages
 
 
 	return messages
@@ -280,8 +281,50 @@ def single_response_json_gen(dictionary):
 
 def transfer_station(dreq):
 	# Which transfer station
-	stations = dreq['queryResult']['parameters'] # Dictionary of (two, three, four) stations
-	pass
+	stations = dreq['queryResult']['parameters'] # Dictionary of (two, three, four) stations.
+	# stations = {'two-station-name': '', 'four-station-name': '', 'three-station-name': ''}
+	station_count = 0
+	try:
+		if stations['two-station-name'] != '' and (stations['three-station-name'] == '' and stations['four-station-name'] == ''):
+			req_station = stations['two-station-name']
+			station_count = 2
+		elif stations['three-station-name'] != '' and (stations['two-station-name'] == '' and stations['four-station-name'] == ''):
+			req_station = stations['three-station-name']
+			station_count = 3
+		elif stations['four-station-name'] != '' and (stations['two-station-name'] == '' and stations['three-station-name'] == ''):
+			req_station = stations['four-station-name']
+			station_count = 4
+		else:
+			logging.warning("Error on parsing station name by station count.")
+			# You have to print out something here. -- make a result message here.
+	
+	except (ValueError, TypeError, KeyError), e:
+		a = str(unicode('역 이름을 제대로 가져오지 못했습니다. 다시 시도해 주세요.'))
+		logging.warning('Error code : ' + str(e))
+		messages = {'result': a, 'result2': ''}
+		return messages
+
+	station_unicode = urllib.urlencode({'': req_station})[1:]
+	logging.warning('transfer-station-unicode : ' + str(station_unicode))
+
+	if station_count == 2:
+		# two station
+	elif station_count == 3:
+		# three station
+	elif station_count == 4:
+		# four station
+	else:
+		# Error
+		a = str(unicode('역의 환승역갯수를 판별하는데 실패했습니다. 관리자한테 문의해 주세요.'))
+		logging.warning('Error code : station_count_int error')
+		messages = {'result': a, 'result2': ''}
+		return messages
+
+
+
+
+
+
 
 
 
