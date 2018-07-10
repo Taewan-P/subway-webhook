@@ -321,6 +321,11 @@ def transfer_station(dreq):
 		return messages
 
 
+def transfer_station_result_gen(stnnum):
+	url = "http://swopenapi.seoul.go.kr/api/subway/<인증키 들어가는곳ㅎ>/json/realtimeStationArrival/1/10/"
+
+
+
 
 
 
