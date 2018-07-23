@@ -108,7 +108,7 @@ def subway_parser(sname,num):
         If api server is down, then it returns None.
     """
     logging.warning("subway-name : " + sname)
-    url = "http://swopenapi.seoul.go.kr/api/subway/<INSERT API KEY>/json/realtimeStationArrival/1/" + num + "/" + sname
+    url = "http://swopenapi.seoul.go.kr/api/subway/<INSERT API KEY>/json/realtimeStationArrival/1/" + str(num) + "/" + sname
 
     try:
         subway_request = requests.get(url, timeout=6).json()
