@@ -31,18 +31,19 @@ app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 def subway_main():
     """ Get json request from dialogflow and parse json.
-		Then get subway information from subway api and then send them back json
-	"""
+        Then get subway information from subway api and then send them back json
+    """
     if request.method == 'GET':
         logging.warning('Somebody is reaching through webpage!')
         return 'This page is not web-reachable. Please go back.'
-	
+    
     # Get station name from dialogflow
     req = request.get_json(silent=True, force=True)
     logging.warning(req)
     station_name = req['queryResult']['parameters']['station-name']
+    station_unicode = urllib.urlencode({'': station_name})[1:]
     
-    subway_response = subway_parser(station_name, 10)
+    subway_response = subway_parser(station_unicode, 10)
 
     if subway_response == None:
         return 'subway api server error.'
@@ -64,7 +65,7 @@ def subway_main():
             messages.append(a)
 
         else:
-            # API Key Error maybe, or anything else	
+            # API Key Error maybe, or anything else 
             logging.warning("Status INFO error : " + status)
             a = str(unicode('Status INFO 에러가 발생했습니다. 관리자한테 문의해 주세요.'))
             b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
@@ -80,7 +81,7 @@ def subway_main():
         messages.append(b)
 
     # 1. Remove duplicated line num
-    subway_ids = [subway_response['realtimeArrivalList'][i]['subwayId'] for i in range(10)]
+    subway_ids = [subway_response['realtimeArrivalList'][i]['subwayId'] for i in range(len(subway_response['realtimeArrivalList']))]
     subway_line = list(OrderedDict.fromkeys(subway_ids)) # This shows how many lines there are in the called station.
 
     # 2. Main Algorithm
@@ -91,8 +92,9 @@ def subway_main():
         messages.append(message_converter(result_json))
     
     fmessages = list()
-    for k in range(len(messages)):
-        fmessages.append(messages[2k] + '\n\n' + messages[2k+1])
+    for k in range(len(messages)/2):
+        astring = messages[2*k] + '\n\n' + messages[2*k+1]
+        fmessages.append(astring)
     
     final_result = response_json_gen(fmessages)
     final_json = json.dumps(final_result)
@@ -109,9 +111,9 @@ def subway_parser(sname,num):
     url = "http://swopenapi.seoul.go.kr/api/subway/<INSERT API KEY>/json/realtimeStationArrival/1/" + num + "/" + sname
 
     try:
-        subway_request = requests.get(baseurl, timeout=6).json()
+        subway_request = requests.get(url, timeout=6).json()
         logging.warning(str(subway_request))
-    except (TimeoutError, runtime.DeadlineExceededError, requests.exceptions.Timeout), e:
+    except (ValueError, TimeoutError, runtime.DeadlineExceededError, requests.exceptions.Timeout), e:
         logging.warning("Seoul subway server error 503")
         return None
     
@@ -123,20 +125,30 @@ def parse_two_lines(sjson, slist):
         # Single station
         subway_message_list = list()
         subway_message_list.append(sjson['realtimeArrivalList'][0])
-        subway_message_list.append(sjson['realtimeArrivalList'][1])
+        if sjson['realtimeArrivalList'][0]['bstatnNm'] == sjson['realtimeArrivalList'][1]['bstatnNm']:
+            subway_message_list.append(sjson['realtimeArrivalList'][2])
+        else:
+            subway_message_list.append(sjson['realtimeArrivalList'][1])
 
     else:
         # Transfer station
-        j = 0
         k = 0
         subway_message_list = list()
         for i in slist:
             for j in range(10):
                 if i == sjson['realtimeArrivalList'][j]['subwayId']:
+                    l = sjson['realtimeArrivalList'][j+1]['trainLineNm']
                     if k == 2:
                         k = 0
                         break
-                    else:
+                    elif k == 1:
+                        if l == sjson['realtimeArrivalList'][j]['trainLineNm']:
+                            continue
+                        else:
+                            subway_message_list.append(sjson['realtimeArrivalList'][j])
+                            k += 1
+
+                    else: # k = 0
                         subway_message_list.append(sjson['realtimeArrivalList'][j])
                         k += 1
                 
@@ -144,108 +156,120 @@ def parse_two_lines(sjson, slist):
 
             
 def id_to_line(sw_id):
-	""" This method changes the subway code to Korean.
-		The subway code comes from the seoul subway api json
-	"""
+    """ This method changes the subway code to Korean.
+        The subway code comes from the seoul subway api json
+    """
 
-	if sw_id[2] == '0':
-		return sw_id[3] + str(unicode('호선'))
-	
-	elif sw_id == '1063':
-		return str(unicode('경의중앙선'))
+    if sw_id[2] == '0':
+        return sw_id[3] + str(unicode('호선'))
+    
+    elif sw_id == '1063':
+        return str(unicode('경의중앙선'))
 
-	elif sw_id == '1065':
-		return str(unicode('공항철도'))
+    elif sw_id == '1065':
+        return str(unicode('공항철도'))
 
-	elif sw_id == '1067':
-		return str(unicode('경춘선'))
+    elif sw_id == '1067':
+        return str(unicode('경춘선'))
 
-	elif sw_id == '1071':
-		return str(unicode('수인선'))
+    elif sw_id == '1071':
+        return str(unicode('수인선'))
 
-	elif sw_id == '1075':
-		return str(unicode('분당선'))
+    elif sw_id == '1075':
+        return str(unicode('분당선'))
 
-	elif sw_id == '1077':
-		return str(unicode('신분당선'))
+    elif sw_id == '1077':
+        return str(unicode('신분당선'))
 
-	else:
-		return str(unicode('업데이트되지 않은 노선'))
-	
+    else:
+        return str(unicode('업데이트되지 않은 노선'))
+    
 
 def message_converter(sjson):
-    line_number = result_json['subwayId']
+    line_number = sjson['subwayId']
     
-    line_name = id_to_line(line_number)
-    line_info = result_json['trainLineNm']	
+    line_nm = id_to_line(line_number)
+    line_info = sjson['trainLineNm']    
     
     arvlcd = sjson['arvlCd']
 
     train = str(unicode('열차는 '))
     if arvlcd == '0':
-		# Current station approaching
-		message =  train_string_combiner(line_nm, line_info, train) + str(unicode('당역 접근중입니다.'))
+        # Current station approaching
+        message =  train_string_combiner(line_nm, line_info, train) + str(unicode('당역 접근중입니다.'))
 
-	elif arvlcd == '1':
-		# Current station arrived
-		message = train_string_combiner(line_nm, line_info, train) + str(unicode('당역에 도착했습니다.'))
+    elif arvlcd == '1':
+        # Current station arrived
+        message = train_string_combiner(line_nm, line_info, train) + str(unicode('당역에 도착했습니다.'))
 
-	elif arvlcd == '2':
-		# Current station departed
-		message = train_string_combiner(line_nm, line_info, train) + str(unicode('당역을 출발했습니다.'))
+    elif arvlcd == '2':
+        # Current station departed
+        message = train_string_combiner(line_nm, line_info, train) + str(unicode('당역을 출발했습니다.'))
 
-	elif arvlcd == '3':
-		# Prev station departed
-		message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역을 출발했습니다.'))
+    elif arvlcd == '3':
+        # Prev station departed
+        message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역을 출발했습니다.'))
 
-	elif arvlcd == '4':
-		# Prev station approaching
-		message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역 접근중입니다.'))
+    elif arvlcd == '4':
+        # Prev station approaching
+        message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역 접근중입니다.'))
 
-	elif arvlcd == '5':
-		# Prev station arrived
-		message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역에 도착했습니다.'))
+    elif arvlcd == '5':
+        # Prev station arrived
+        message = train_string_combiner(line_nm, line_info, train) + str(unicode('전역에 도착했습니다.'))
+        
+    elif arvlcd == '99':
+        # Now running
+        arvlmsg = sjson['arvlMsg2']
+        # logging.warning('type :line_nm, line_info, train')
+        # logging.warning(type(line_nm))
+        # logging.warning(type(line_info))
+        # logging.warning(type(train))
+        # logging.warning(type(arvlmsg))
+        # logging.warning(arvlmsg)
+        # logging.warning(type(train_string_combiner(line_nm, line_info, train)))
+        # logging.warning(type(subway_status_changer(arvlmsg)))
+        message = train_string_combiner(line_nm, line_info, train) + subway_status_changer(arvlmsg)
 
-	elif arvlcd == '99':
-		# Now running
-		arvlmsg = sjson['arvlMsg2']
-		message = train_string_combiner(line_nm, line_info, train) + subway_status_changer(arvlmsg)
-
-	else:
-		logging.warning("An error occured in subway webhook system.(CODE:arvlCd)")	
-		logging.warning("Error arrival code is " + arvlcd)
-		message = str(unicode('알수 없음 :('))
+    else:
+        logging.warning("An error occured in subway webhook system.(CODE:arvlCd)")  
+        logging.warning("Error arrival code is " + arvlcd)
+        message = str(unicode('알수 없음 :('))
 
     return message
 
 
 def train_string_combiner(a,b,korean):
-	""" This is a simple method to make arrival message string combine easier.
-	"""
-	return a + ' ' + b + ' ' + str(unicode(korean)) + ' \n'
+    """ This is a simple method to make arrival message string combine easier.
+    """
+    return a + ' ' + b + ' ' + str(unicode(korean)) + ' \n'
 
 
 def subway_status_changer(string):
-	""" This method changes seoul subway message into neat speakable sentences.
-		This is used in both single_station() and transfer_station().
-	"""
+    """ This method changes seoul subway message into neat speakable sentences.
+        This is used in both single_station() and transfer_station().
+    """
 
-	a = 0
-	for i in string:
-		if i == '[':
-			a += 1
-		elif i == ']':
-			a += 1
-	
-	if a == 2:
-		return_string = string[1] + str(unicode('번째 전역 입니다.'))
-		return return_string
+    a = 0
+    for i in string:
+        if i == '[':
+            a += 1
+        elif i == ']':
+            a += 1
+
+    if a == 2:
+        return_string = string[1] + str(unicode('번째 전역 입니다.'))
+    else:
+        return_string = string + str(unicode(' 도착합니다.'))
+    
+    return return_string
+
 
 
 def response_json_gen(mlist):
     a = list()
     for m in mlist:
-        b = {"simpleResponse": {"textToSpeech": }}
+        b = {"simpleResponse": {"textToSpeech": ""}}
         b['simpleResponse']['textToSpeech'] = m
         a.append(b)
     
