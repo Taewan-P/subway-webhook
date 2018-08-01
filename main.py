@@ -58,7 +58,11 @@ def subway_main():
         return final_json.encode('utf-8')
 
     logging.warning(str(subway_response))
-    status = subway_response['errorMessage']['code']
+    try:
+        status = subway_response['errorMessage']['code']
+    except (KeyError), e:
+        status = subway_response['code']
+
 
     # Error status analysis
     if status[0] == 'I':
@@ -106,8 +110,11 @@ def subway_main():
     # 1. Remove duplicated line num
     subway_ids = [subway_response['realtimeArrivalList'][i]['subwayId'] for i in range(len(subway_response['realtimeArrivalList']))]
     subway_line = list(OrderedDict.fromkeys(subway_ids)) # This shows how many lines there are in the called station.
-
+    
     logging.warning(subway_line)
+    subway_line.sort()
+    logging.warning(subway_line)
+
     # 2. Main Algorithm
     subway_result_list = parse_two_lines(subway_response, subway_line)
     
@@ -179,7 +186,8 @@ def parse_two_lines(sjson, slist):
                         train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
                         subway_message_list.append(sjson['realtimeArrivalList'][j])
                         k += 1
-                
+
+    logging.warning(subway_message_list)           
     return subway_message_list
 
             
