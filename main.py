@@ -43,7 +43,7 @@ def subway_main():
     station_name = req['queryResult']['parameters']['station-name']
     station_unicode = urllib.urlencode({'': station_name})[1:]
     
-    subway_response = subway_parser(station_unicode, 10)
+    subway_response = subway_parser(station_unicode, 12)
 
     if subway_response == None:
         # return 'subway api server error.'
@@ -63,7 +63,7 @@ def subway_main():
     # Error status analysis
     if status[0] == 'I':
         # INFO
-        fmessages = list()
+        messages = list()
         if status[5:] == '000':
             # Normal status
             pass
@@ -71,8 +71,8 @@ def subway_main():
         elif status[5:] == '200':
             # No data
             a = str(unicode('지하철이 없습니다.'))
-            fmessages.append(a)
-            final_result = response_json_gen(fmessages)
+            messages.append(a)
+            final_result = response_json_gen(messages)
             final_json = json.dumps(final_result)
         
             return final_json.encode('utf-8')
@@ -82,10 +82,10 @@ def subway_main():
             logging.warning("Status INFO error : " + status)
             a = str(unicode('Status INFO 에러가 발생했습니다. 관리자한테 문의해 주세요.'))
             b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
-            fmessages.append(a)
-            fmessages.append(b)
+            messages.append(a)
+            messages.append(b)
 
-            final_result = response_json_gen(fmessages)
+            final_result = response_json_gen(messages)
             final_json = json.dumps(final_result)
         
             return final_json.encode('utf-8')
@@ -95,10 +95,10 @@ def subway_main():
         logging.warning("Something went wrong : " + status)
         a = str(unicode('서버 상태 오류!!! 관리자한테 문의해 주세요.'))
         b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
-        fmessages.append(a)
-        fmessages.append(b)
+        messages.append(a)
+        messages.append(b)
 
-        final_result = response_json_gen(fmessages)
+        final_result = response_json_gen(messages)
         final_json = json.dumps(final_result)
         
         return final_json.encode('utf-8')
@@ -107,6 +107,7 @@ def subway_main():
     subway_ids = [subway_response['realtimeArrivalList'][i]['subwayId'] for i in range(len(subway_response['realtimeArrivalList']))]
     subway_line = list(OrderedDict.fromkeys(subway_ids)) # This shows how many lines there are in the called station.
 
+    logging.warning(subway_line)
     # 2. Main Algorithm
     subway_result_list = parse_two_lines(subway_response, subway_line)
     
@@ -156,37 +157,28 @@ def parse_two_lines(sjson, slist):
     else:
         # Transfer station
         k = 0
-        train_name_list = list()
         subway_message_list = list()
         for i in slist:
-            if i == '1002':
-                # Special case
-                # updnLine
-                # for j in range(10):
-                #     if i == sjson
-                pass
-
-
-            else:
-                # Normal case
-                for j in range(len(sjson['realtimeArrivalList'])):
-                    if i == sjson['realtimeArrivalList'][j]['subwayId']:
-                        if k == 2:
-                            k = 0
-                            break
-                        
-                        elif k == 1:
-                            a = sjson['realtimeArrivalList'][j]['trainLineNm']
-                            if a in train_name_list:
-                                continue
-                            else:
-                                subway_message_list.append(sjson['realtimeArrivalList'][j])
-                                k += 1
-
-                        else: # k = 0
-                            train_name_list.append(sjson['realtimeArrivalList'][j]['trainLineNm'])
+            # Normal case
+            train_name_list = list()
+            for j in range(len(sjson['realtimeArrivalList'])):
+                if i == sjson['realtimeArrivalList'][j]['subwayId']:
+                    if k == 2:
+                        k = 0
+                        break
+                    
+                    elif k == 1:
+                        a = sjson['realtimeArrivalList'][j]['updnLine']
+                        if a in train_name_list:
+                            continue
+                        else:
                             subway_message_list.append(sjson['realtimeArrivalList'][j])
                             k += 1
+
+                    else: # k = 0
+                        train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
+                        subway_message_list.append(sjson['realtimeArrivalList'][j])
+                        k += 1
                 
     return subway_message_list
 
