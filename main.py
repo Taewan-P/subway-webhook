@@ -74,7 +74,7 @@ def subway_main():
         
         elif status[5:] == '200':
             # No data
-            a = str(unicode('지하철이 없습니다.'))
+            a = str(unicode('지하철이 없습니다. 역 이름을 다시 확인해 보세요.'))
             messages.append(a)
             final_result = response_json_gen(messages)
             final_json = json.dumps(final_result)
@@ -156,8 +156,12 @@ def parse_two_lines(sjson, slist):
         # Single station
         subway_message_list = list()
         subway_message_list.append(sjson['realtimeArrivalList'][0])
-        if sjson['realtimeArrivalList'][0]['bstatnNm'] == sjson['realtimeArrivalList'][1]['bstatnNm']:
-            subway_message_list.append(sjson['realtimeArrivalList'][2])
+        if sjson['realtimeArrivalList'][0]['updnLine'] == sjson['realtimeArrivalList'][1]['updnLine']:
+            if sjson['realtimeArrivalList'][0]['updnLine'] == sjson['realtimeArrivalList'][2]['updnLine']:
+                subway_message_list.append(sjson['realtimeArrivalList'][3])
+            else:
+                subway_message_list.append(sjson['realtimeArrivalList'][2])
+
         else:
             subway_message_list.append(sjson['realtimeArrivalList'][1])
 
