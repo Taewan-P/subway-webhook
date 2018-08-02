@@ -144,7 +144,7 @@ def subway_parser(sname,num):
     try:
         subway_request = requests.get(url, timeout=10).json()
         logging.warning(str(subway_request))
-    except (ValueError, TimeoutError, runtime.DeadlineExceededError, requests.exceptions.Timeout), e:
+    except (ValueError, TimeoutError), e:
         logging.warning("Seoul subway server error 503")
         return None
     
@@ -152,44 +152,29 @@ def subway_parser(sname,num):
     
 
 def parse_two_lines(sjson, slist):
-    if len(slist) == 1:
-        # Single station
-        subway_message_list = list()
-        subway_message_list.append(sjson['realtimeArrivalList'][0])
-        if sjson['realtimeArrivalList'][0]['updnLine'] == sjson['realtimeArrivalList'][1]['updnLine']:
-            if sjson['realtimeArrivalList'][0]['updnLine'] == sjson['realtimeArrivalList'][2]['updnLine']:
-                subway_message_list.append(sjson['realtimeArrivalList'][3])
-            else:
-                subway_message_list.append(sjson['realtimeArrivalList'][2])
-
-        else:
-            subway_message_list.append(sjson['realtimeArrivalList'][1])
-
-    else:
-        # Transfer station
-        k = 0
-        subway_message_list = list()
-        for i in slist:
-            # Normal case
-            train_name_list = list()
-            for j in range(len(sjson['realtimeArrivalList'])):
-                if i == sjson['realtimeArrivalList'][j]['subwayId']:
-                    if k == 2:
-                        k = 0
-                        break
-                    
-                    elif k == 1:
-                        a = sjson['realtimeArrivalList'][j]['updnLine']
-                        if a in train_name_list:
-                            continue
-                        else:
-                            subway_message_list.append(sjson['realtimeArrivalList'][j])
-                            k += 1
-
-                    else: # k = 0
-                        train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
+    k = 0
+    subway_message_list = list()
+    for i in slist:
+        # Normal case
+        train_name_list = list()
+        for j in range(len(sjson['realtimeArrivalList'])):
+            if i == sjson['realtimeArrivalList'][j]['subwayId']:
+                if k == 2:
+                    k = 0
+                    break
+                
+                elif k == 1:
+                    a = sjson['realtimeArrivalList'][j]['updnLine']
+                    if a in train_name_list:
+                        continue
+                    else:
                         subway_message_list.append(sjson['realtimeArrivalList'][j])
                         k += 1
+
+                else: # k = 0
+                    train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
+                    subway_message_list.append(sjson['realtimeArrivalList'][j])
+                    k += 1
 
     logging.warning(subway_message_list)           
     return subway_message_list
