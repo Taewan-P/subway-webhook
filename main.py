@@ -123,10 +123,14 @@ def subway_main():
         messages.append(message_converter(result_json))
     
     fmessages = list()
-    for k in range(len(messages)/2):
-        astring = messages[2*k] + '\n\n' + messages[2*k+1]
-        fmessages.append(astring)
+    if len(messages) == 1:
+        fmessages.append(messages[0])
+    else:
+        for k in range(len(messages)/2):
+            astring = messages[2*k] + '\n\n' + messages[2*k+1]
+            fmessages.append(astring)
     
+    logging.warning('fmessage : ' + str(fmessages))
     final_result = response_json_gen(fmessages)
     final_json = json.dumps(final_result)
 
