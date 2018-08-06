@@ -163,10 +163,11 @@ def parse_two_lines(sjson, slist):
         train_name_list = list()
         for j in range(len(sjson['realtimeArrivalList'])):
             if i == sjson['realtimeArrivalList'][j]['subwayId']:
-                if k == 2:
-                    k = 0
-                    break
-                
+                if k == 0:
+                    train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
+                    subway_message_list.append(sjson['realtimeArrivalList'][j])
+                    k += 1
+
                 elif k == 1:
                     a = sjson['realtimeArrivalList'][j]['updnLine']
                     if a in train_name_list:
@@ -174,13 +175,12 @@ def parse_two_lines(sjson, slist):
                     else:
                         subway_message_list.append(sjson['realtimeArrivalList'][j])
                         k += 1
-
-                else: # k = 0
-                    train_name_list.append(sjson['realtimeArrivalList'][j]['updnLine'])
-                    subway_message_list.append(sjson['realtimeArrivalList'][j])
-                    k += 1
-
-    logging.warning(subway_message_list)           
+                
+                if k == 2:
+                    k = 0
+                    break
+    
+    logging.warning(subway_message_list)
     return subway_message_list
 
             
