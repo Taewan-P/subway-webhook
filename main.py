@@ -130,13 +130,19 @@ def subway_main():
         for k in range(len(messages)/2):
             astring = messages[2*k] + '\n\n' + messages[2*k+1]
             smessages.append(astring)
-        if len(smessages) == 3:
+
+        if len(smessages) == 1:
+            fmessages = list(smessages)
+
+        elif len(smessages) == 3:
             fmessages.append(smessages[0])
             bstring = smessages[1] + '\n\n\n' + smessages[2]
+            logging.warning('smessages' + str(smessages))
             fmessages.append(bstring)
-        else:    
+        
+        else:
             for j in range(len(smessages)/2):
-                bstring = smessages[2*k] + '\n\n\n' + smessages[2*k+1]
+                bstring = smessages[2*j] + '\n\n\n' + smessages[2*j+1]
                 fmessages.append(bstring)
         
 
