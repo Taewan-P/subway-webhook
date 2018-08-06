@@ -123,13 +123,23 @@ def subway_main():
         messages.append(message_converter(result_json))
     
     fmessages = list()
+    smessages = list()
     if len(messages) == 1:
         fmessages.append(messages[0])
     else:
         for k in range(len(messages)/2):
             astring = messages[2*k] + '\n\n' + messages[2*k+1]
-            fmessages.append(astring)
-    
+            smessages.append(astring)
+        if len(smessages) == 3:
+            fmessages.append(smessages[0])
+            bstring = smessages[1] + '\n\n\n' + smessages[2]
+            fmessages.append(bstring)
+        else:    
+            for j in range(len(smessages)/2):
+                bstring = smessages[2*k] + '\n\n\n' + smessages[2*k+1]
+                fmessages.append(bstring)
+        
+
     logging.warning('fmessage : ' + str(fmessages))
     final_result = response_json_gen(fmessages)
     final_json = json.dumps(final_result)
@@ -292,7 +302,6 @@ def subway_status_changer(string):
         return_string = string + str(unicode(' 도착합니다.'))
     
     return return_string
-
 
 
 def response_json_gen(mlist):
