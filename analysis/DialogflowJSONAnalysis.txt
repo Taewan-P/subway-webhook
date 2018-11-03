@@ -17,7 +17,7 @@
 		'fulfillmentText': '지금 중앙역 정보를 가져올수 없습니다... 다시 요청해 주세요',
 		'allRequiredParamsPresent': True,
 		'parameters': {
-			'one-station-name': '중앙'
+			'station-name': '중앙'
 		},
 		'languageCode': 'ko',
 		'intentDetectionConfidence': 1.0,
@@ -30,64 +30,64 @@
 		'queryText': '\x08중앙역',
 		'outputContexts': [{
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			},
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/tellmesubwayinfo-followup',
 			'lifespanCount': 1
 		}, {
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/actions_capability_screen_output',
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			}
 		}, {
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/actions_capability_audio_output',
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			}
 		}, {
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/google_assistant_input_type_keyboard',
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			}
 		}, {
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/actions_capability_media_response_audio',
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			}
 		}, {
 			'name': 'projects/subway-information/agent/sessions/1528352576968/contexts/actions_capability_web_browser',
 			'parameters': {
-				'one-station-name.original': '중앙',
+				'station-name.original': '중앙',
 				'recursive': '',
 				'recursive.original': '',
 				'tranportation': '지하철',
 				'tranportation.original': '지하철',
-				'one-station-name': '중앙'
+				'station-name': '중앙'
 			}
 		}]
 	},
@@ -142,177 +142,4 @@
 	},
 	'session': 'projects/subway-information/agent/sessions/1528352576968',
 	'responseId': 'd68543b6-bb32-4d35-88dd-3df071fc0a91'
-}
-
-
-
-##### Transfer Station ##### 
-{
-	'queryResult': {
-		'fulfillmentMessages': [{
-			'platform': 'ACTIONS_ON_GOOGLE',
-			'simpleResponses': {
-				'simpleResponses': [{
-					'textToSpeech': '환승역에 계시는군요. 하지만 사당역 정보를 가져올 수 없습니다... 다시 요청해 주세요'
-				}]
-			}
-		}, {
-			'text': {
-				'text': ['환승역에 계시는군요. 하지만 사당역 정보를 가져올 수 없습니다... 다시 요청해 주세요']
-			}
-		}],
-		'fulfillmentText': '환승역에 계시는군요. 하지만 사당역 정보를 가져올 수 없습니다... 다시 요청해 주세요',
-		'allRequiredParamsPresent': True,
-		'parameters': {
-			'two-station-name': '사당',
-			'four-station-name': '',
-			'three-station-name': ''
-		},
-		'languageCode': 'ko',
-		'intentDetectionConfidence': 1.0,
-		'action': 'Tellmesubwayinfo.Tellmesubwayinfo-custom',
-		'intent': {
-			'displayName': 'which transfer station',
-			'name': 'projects/subway-information/agent/intents/5e36752f-7c7c-4b38-9a13-58254ff5c92e'
-		},
-		'diagnosticInfo': {},
-		'queryText': '사당역',
-		'outputContexts': [{
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			},
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/tellmesubwayinfo-followup',
-			'lifespanCount': 1
-		}, {
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/actions_capability_screen_output',
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			}
-		}, {
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/actions_capability_audio_output',
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			}
-		}, {
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/google_assistant_input_type_keyboard',
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			}
-		}, {
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/actions_capability_web_browser',
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			}
-		}, {
-			'name': 'projects/subway-information/agent/sessions/1528353132448/contexts/actions_capability_media_response_audio',
-			'parameters': {
-				'three-station-name': '',
-				'recursive': '',
-				'four-station-name.original': '',
-				'two-station-name': '사당',
-				'recursive.original': '',
-				'two-station-name.original': '사당',
-				'tranportation': '',
-				'four-station-name': '',
-				'tranportation.original': '',
-				'three-station-name.original': ''
-			}
-		}]
-	},
-	'originalDetectIntentRequest': {
-		'source': 'google',
-		'version': '2',
-		'payload': {
-			'inputs': [{
-				'rawInputs': [{
-					'query': '사당역',
-					'inputType': 'KEYBOARD'
-				}],
-				'intent': 'actions.intent.TEXT',
-				'arguments': [{
-					'rawText': '사당역',
-					'textValue': '사당역',
-					'name': 'text'
-				}]
-			}],
-			'isInSandbox': True,
-			'surface': {
-				'capabilities': [{
-					'name': 'actions.capability.MEDIA_RESPONSE_AUDIO'
-				}, {
-					'name': 'actions.capability.WEB_BROWSER'
-				}, {
-					'name': 'actions.capability.AUDIO_OUTPUT'
-				}, {
-					'name': 'actions.capability.SCREEN_OUTPUT'
-				}]
-			},
-			'conversation': {
-				'conversationId': '1528353132448',
-				'type': 'ACTIVE',
-				'conversationToken': '["tellmesubwayinfo-followup"]'
-			},
-			'availableSurfaces': [{
-				'capabilities': [{
-					'name': 'actions.capability.WEB_BROWSER'
-				}, {
-					'name': 'actions.capability.AUDIO_OUTPUT'
-				}, {
-					'name': 'actions.capability.SCREEN_OUTPUT'
-				}]
-			}],
-			'user': {
-				'locale': 'ko-KR',
-				'userId': 'ABwppHGlqs1PFBF3snJAvfvcinHt2GZZkIDblgoHeGnKEgXhTrS1srNBn2i_tKLA4B3ijhrMXiKachvmGzS8atmr',
-				'lastSeen': '2018-06-07T06:27:43Z'
-			}
-		}
-	},
-	'session': 'projects/subway-information/agent/sessions/1528353132448',
-	'responseId': 'ea10337e-e2c5-4ff0-978c-a575070a4cc1'
 }
