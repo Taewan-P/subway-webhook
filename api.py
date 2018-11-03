@@ -32,15 +32,8 @@ def subway_main():
 
     if subway_response == None:
         # return 'subway api server error.'
-        fmessages = list()
-        a = str(unicode("현재 서울 지하철 서버에 일시적으로 접속할 수 없습니다."))
-        b = str(unicode("이것은 서울 지하철 서버의 일시적인 문제로, 잠시후에 다시 시도해 주세요."))
-        fmessages.append(a)
-        fmessages.append(b)
-        final_result = response_json_gen(fmessages)
-        final_json = json.dumps(final_result)
-
-        return final_json.encode('utf-8')
+        return string_to_json("현재 서울 지하철 서버에 일시적으로 접속할 수 없습니다.",
+                    "이것은 서울 지하철 서버의 일시적인 문제로, 잠시후에 다시 시도해 주세요.")
 
     logging.warning(str(subway_response))
     try:
@@ -48,50 +41,31 @@ def subway_main():
     except (KeyError), e:
         status = subway_response['code']
 
-    messages = ""
-
     # Error status analysis
     if status[0] == 'I':
         # INFO
-        messages = list()
         if status[5:] == '000':
             # Normal status
             pass
 
         elif status[5:] == '200':
             # No data
-            a = str(unicode('지하철이 없습니다. 역 이름을 다시 확인해 보세요.'))
-            messages.append(a)
-            final_result = response_json_gen(messages)
-            final_json = json.dumps(final_result)
-
-            return final_json.encode('utf-8')
+            return string_to_json("지하철이 없습니다. 역 이름을 다시 확인해 보세요.")
 
         else:
             # API Key Error maybe, or anything else
             logging.warning("Status INFO error : " + status)
-            a = str(unicode('Status INFO 에러가 발생했습니다. 관리자한테 문의해 주세요.'))
-            b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
-            messages.append(a)
-            messages.append(b)
-
-            final_result = response_json_gen(messages)
-            final_json = json.dumps(final_result)
-
-            return final_json.encode('utf-8')
+            return string_to_json("Status INFO 에러가 발생했습니다. 관리자한테 문의해 주세요.",
+                        "개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.")
 
     else:
         # ERROR
         logging.warning("Something went wrong : " + status)
-        a = str(unicode('서버 상태 오류!!! 관리자한테 문의해 주세요.'))
-        b = str(unicode('개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.'))
-        messages.append(a)
-        messages.append(b)
 
-        final_result = response_json_gen(messages)
-        final_json = json.dumps(final_result)
+        return string_to_json("서버 상태 오류!!! 관리자한테 문의해 주세요.",
+                    "개발자 정보는 구글 어시스턴트 홈페이지 앱 정보에서 보실 수 있습니다.")
 
-        return final_json.encode('utf-8')
+    messages = list()
 
     # 1. Remove duplicated line num
     subway_ids = [subway_response['realtimeArrivalList'][i]['subwayId'] for i in
@@ -295,6 +269,21 @@ def subway_status_changer(string):
         return_string = string + str(unicode(' 도착합니다.'))
 
     return return_string
+
+
+def string_to_json(string1, string2=None):
+    fmessages = list()
+    a = str(unicode(string1))
+    fmessages.append(a)
+
+    if not string2:
+        b = str(unicode(string2))
+        fmessages.append(b)
+
+    final_result = response_json_gen(fmessages)
+    final_json = json.dumps(final_result)
+
+    return final_json.encode('utf-8')
 
 
 def response_json_gen(mlist):
